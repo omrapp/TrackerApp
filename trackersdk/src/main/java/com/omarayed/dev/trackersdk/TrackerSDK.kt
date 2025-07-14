@@ -9,7 +9,9 @@ private interface TrackerAPI {
     fun stop(tag: String, result: ((Long?) -> Unit)? = null)
     fun duration(tag: String): Long?
     fun <T> measure(tag: String, block: () -> T): T
-    fun restAll()
+    fun resetAll()
+
+    var isEnabled: Boolean
 }
 
 object TrackerSDK : TrackerAPI {
@@ -17,7 +19,7 @@ object TrackerSDK : TrackerAPI {
     private val startTimes = mutableMapOf<String, Long>()
     private val durations = mutableMapOf<String, Long>()
 
-    var isEnabled: Boolean = true
+    override var isEnabled: Boolean = true
 
     var logger: ((String, String) -> Unit) = { tag, message ->
         CoroutineScope(Dispatchers.IO).launch {
@@ -61,7 +63,7 @@ object TrackerSDK : TrackerAPI {
         return result
     }
 
-    override fun restAll() {
+    override fun resetAll() {
         startTimes.clear()
         durations.clear()
     }
